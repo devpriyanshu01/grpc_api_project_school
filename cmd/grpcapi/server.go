@@ -1,12 +1,14 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net"
 	"os"
 
 	"github.com/devpriyanshu01/grpc_api_project_school/internals/api/handlers"
+	"github.com/devpriyanshu01/grpc_api_project_school/internals/repositories/mongodb"
 	pb "github.com/devpriyanshu01/grpc_api_project_school/proto/gen"
 	"github.com/joho/godotenv"
 	"google.golang.org/grpc"
@@ -14,7 +16,14 @@ import (
 )
 
 func main() {
-	err := godotenv.Load()
+	_, err := mongodb.CreateMongoClient(context.Background())
+	if err != nil {
+		log.Println("Failed to connect to mongodb")
+		return
+	}
+	
+
+	err = godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file: ", err)
 		return
