@@ -4,7 +4,7 @@ package main;
 
 option go_package = "/proto/gen;grpcapipb";
 
-service StudentService {
+service StudentsService {
     rpc GetStudents (GetStudentsRequest) returns (Students);
     rpc AddStudents (Students) returns (Students);
     rpc UpdateStudents (Students) returns (Students);

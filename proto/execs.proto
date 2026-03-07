@@ -6,7 +6,7 @@ package main;
 
 option go_package = "/proto/gen;grpcapipb";
 
-service ExecService {
+service ExecsService {
     rpc GetExecs (GetExecsRequest) returns (Execs);
     rpc AddExecs (Execs) returns (Execs);
     rpc UpdateExecs (Execs) returns (Execs);

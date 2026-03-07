@@ -527,8 +527,8 @@ const file_students_proto_rawDesc = "" +
 	"\bstudents\x18\x01 \x03(\v2\r.main.StudentR\bstudents*\x1a\n" +
 	"\x05Order\x12\a\n" +
 	"\x03ASC\x10\x00\x12\b\n" +
-	"\x04DESC\x10\x012\xf0\x01\n" +
-	"\x0eStudentService\x127\n" +
+	"\x04DESC\x10\x012\xf1\x01\n" +
+	"\x0fStudentsService\x127\n" +
 	"\vGetStudents\x12\x18.main.GetStudentsRequest\x1a\x0e.main.Students\x12-\n" +
 	"\vAddStudents\x12\x0e.main.Students\x1a\x0e.main.Students\x120\n" +
 	"\x0eUpdateStudents\x12\x0e.main.Students\x1a\x0e.main.Students\x12D\n" +
@@ -565,14 +565,14 @@ var file_students_proto_depIdxs = []int32{
 	6, // 2: main.GetStudentsRequest.sort_by:type_name -> main.SortField
 	0, // 3: main.SortField.order:type_name -> main.Order
 	7, // 4: main.Students.students:type_name -> main.Student
-	5, // 5: main.StudentService.GetStudents:input_type -> main.GetStudentsRequest
-	8, // 6: main.StudentService.AddStudents:input_type -> main.Students
-	8, // 7: main.StudentService.UpdateStudents:input_type -> main.Students
-	4, // 8: main.StudentService.DeleteStudents:input_type -> main.StudentIds
-	8, // 9: main.StudentService.GetStudents:output_type -> main.Students
-	8, // 10: main.StudentService.AddStudents:output_type -> main.Students
-	8, // 11: main.StudentService.UpdateStudents:output_type -> main.Students
-	2, // 12: main.StudentService.DeleteStudents:output_type -> main.DeleteStudentsConfirmation
+	5, // 5: main.StudentsService.GetStudents:input_type -> main.GetStudentsRequest
+	8, // 6: main.StudentsService.AddStudents:input_type -> main.Students
+	8, // 7: main.StudentsService.UpdateStudents:input_type -> main.Students
+	4, // 8: main.StudentsService.DeleteStudents:input_type -> main.StudentIds
+	8, // 9: main.StudentsService.GetStudents:output_type -> main.Students
+	8, // 10: main.StudentsService.AddStudents:output_type -> main.Students
+	8, // 11: main.StudentsService.UpdateStudents:output_type -> main.Students
+	2, // 12: main.StudentsService.DeleteStudents:output_type -> main.DeleteStudentsConfirmation
 	9, // [9:13] is the sub-list for method output_type
 	5, // [5:9] is the sub-list for method input_type
 	5, // [5:5] is the sub-list for extension type_name
