@@ -24,5 +24,8 @@ func (s *Server) GetTeachers(ctx context.Context, req *grpcapipb.GetTeachersRequ
 		fmt.Println("teachers;", teachers)
 	}
 	//dummy return
-	return nil, nil
+	response := &grpcapipb.Teachers{
+		Teachers: teachers,
+	}
+	return response, nil
 }

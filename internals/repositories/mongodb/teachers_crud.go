@@ -83,10 +83,14 @@ func AddTeachersToDb(ctx context.Context, req *grpcapipb.Teachers) ([]*grpcapipb
 	return addedTeachers, nil
 }
 
-func GetTeachersFromDb(ctx context.Context, req *grpcapipb.GetTeachersRequest) (*grpcapipb.Teachers, error) {
+func GetTeachersFromDb(ctx context.Context, req *grpcapipb.GetTeachersRequest) ([]*grpcapipb.Teacher, error) {
 	log.Println("request inside GetTeachersDb")
+
 	//filtering, getting the filters from the request, another function
-	filter := buildFilterForTeacher(req)
+	filter, err := BuildFilterForTeacher(req.Teacher, &models.Teacher{})
+	if err != nil {
+		return nil, utils.ErrorHandler(err, "Error building filter object")
+	}
 
 	//sorting, getting the sort options from the request, another function
 	sortOptions := buildSortOptions(req.GetSortBy())
@@ -100,7 +104,14 @@ func GetTeachersFromDb(ctx context.Context, req *grpcapipb.GetTeachersRequest) (
 
 	coll := client.Database("school").Collection("teachers") //create collection instance
 	var cursor *mongo.Cursor                                 //cursor is used to iterate over a stream of documents
-	cursor, err = coll.Find(ctx, filter, options.Find().SetSort(sortOptions))
+
+	//if no sorting is required then we don't pass sortOptions to Find() fn.
+	if len(sortOptions) < 1 {
+		cursor, err = coll.Find(ctx, filter)
+	} else {
+		cursor, err = coll.Find(ctx, filter, options.Find().SetSort(sortOptions))
+	}
+
 	if err != nil {
 		return nil, utils.ErrorHandler(err, "can't find teachers data")
 	}
@@ -131,23 +142,24 @@ func GetTeachersFromDb(ctx context.Context, req *grpcapipb.GetTeachersRequest) (
 			Class:     teacher.Class,
 			Subject:   teacher.Subject,
 		})
-		//14m 35s
 	}
 
-	//store req data to
-	log.Println("Client:", client)
-	return nil, nil
+	return teachers, nil
 }
 
-func buildFilterForTeacher(req *grpcapipb.GetTeachersRequest) bson.M {
+func buildFilterForTeacher(teacher *grpcapipb.Teacher) (bson.M, error) {
 	filter := bson.M{}
+
+	if teacher == nil {
+		return filter, nil
+	}
 
 	var modelTeacher models.Teacher
 	modelVal := reflect.ValueOf(&modelTeacher).Elem()
 	modelType := modelVal.Type()
 
 	//store the data from req to our internal struct
-	reqVal := reflect.ValueOf(req.Teacher).Elem()
+	reqVal := reflect.ValueOf(teacher).Elem()
 	reqType := reqVal.Type()
 
 	for i := 0; i < reqVal.NumField(); i++ {
@@ -170,12 +182,24 @@ func buildFilterForTeacher(req *grpcapipb.GetTeachersRequest) bson.M {
 		if fieldVal.IsValid() && !fieldVal.IsZero() {
 			bsonTag := modelType.Field(i).Tag.Get("bson")
 			bsonTag = strings.TrimSuffix(bsonTag, ",omitempty")
-			filter[bsonTag] = fieldVal.Interface().(string)
+			
+			//when request received is filter with _id the Mongodb won't be able to fetch the data.
+			//Because _id is ObjectId is mongodb. So we need to convert the string-id received from 
+			//the request to ObjectId.
+			if bsonTag == "_id" {
+				objectId, err := primitive.ObjectIDFromHex(teacher.Id)
+				if err != nil {
+					return nil, utils.ErrorHandler(err, "failed to convert given _id to objectId.")
+				} 
+				filter[bsonTag] = objectId
+			}else {
+				filter[bsonTag] = fieldVal.Interface().(string)
+			}
 		}
 	}
 	fmt.Println("Filter:", filter)
 
-	return filter
+	return filter, nil
 }
 
 // for sorting
